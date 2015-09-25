@@ -1,0 +1,27 @@
+{
+  "name": "edp-build-optimg",
+  "version": "0.1.0",
+  "description": "An optimizing image processor for EDP BUILD",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "edp",
+    "build",
+    "optimize",
+    "image"
+  ],
+  "author": "sparklewhy@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "imagemin": "^3.2.0",
+    "imagemin-jpeg-recompress": "^4.3.0",
+    "imagemin-pngquant": "^4.2.0",
+    "lodash": "^3.10.1",
+    "pretty-bytes": "^2.0.1"
+  },
+  "devDependencies": {
+    "imagemin-webp": "^3.1.0"
+  }
+}
