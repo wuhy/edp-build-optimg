@@ -23,7 +23,7 @@ exports.getProcessors = function () {
     var ImgOptimziedProcessor = require('edp-build-optimg');
     var imgOptProcessor = new ImgOptimziedProcessor(
         {
-            files: ['*.svg'],
+            //files: ['*.svg'],
             imgOptions: {
                 webp: {
                     option: {quality: 50},

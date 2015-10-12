@@ -8,8 +8,8 @@
 
 var util = require('util');
 var _ = require('lodash');
-var prettyBytes = require('pretty-bytes');
 var Imagemin = require('imagemin');
+var prettyBytes = require('./lib/helper').prettyBytes;
 
 /**
  * 图片优化处理器
