@@ -7,6 +7,14 @@ edp-build-optimg 是 [edp-build](https://github.com/ecomfe/edp-build) 的一个�
 
 ## 如何使用
 
+### Install
+
+```shell
+npm install edp-build-optimg
+```
+
+### Config
+
 ```javascript
 var ImgOptimziedProcessor = require('edp-build-optimg');
 var imgOptProcessor = new ImgOptimziedProcessor(
