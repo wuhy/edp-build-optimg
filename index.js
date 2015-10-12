@@ -52,6 +52,7 @@ function ImageOptimizeProcessor(options) {
         };
     });
     this.imgProcessors = processors;
+    this.optResult = {};
 }
 
 util.inherits(ImageOptimizeProcessor, AbstractProcessor);
@@ -171,11 +172,17 @@ ImageOptimizeProcessor.prototype.process = function (file, processContext, callb
         log.info('process image file %s...', file.path);
         var originSize = file.data.length;
         var filePath = file.path;
+        var optResultMap = this.optResult;
 
         new Imagemin()
             .src(new Buffer(file.data))
             .use(imgProcessor.processor(imgProcessor.option))
             .run(function (err, files) {
+                var triggered = optResultMap[filePath];
+                optResultMap[filePath] = {
+                    optimized: false
+                };
+
                 if (err) {
                     log.error('process image file %s error happen: %s', filePath, err);
                 }
@@ -186,24 +193,58 @@ ImageOptimizeProcessor.prototype.process = function (file, processContext, callb
                     var optimizedData = files[0].contents;
                     var size = optimizedData.length;
                     var saveSize = originSize - size;
-                    var saverPercent = originSize > 0 ? saveSize / originSize * 100 : 0;
+                    var savePercent = originSize > 0 ? saveSize / originSize * 100 : 0;
 
-                    file.data = optimizedData;
+                    savePercent > 0 && (file.data = optimizedData);
 
+                    var optResult = {
+                        rawSize: originSize,
+                        optSize: size,
+                        saveSize: saveSize,
+                        optimized: savePercent > 0,
+                        savePercent: savePercent.toFixed(2) + '%'
+                    };
+                    optResultMap[filePath] = optResult;
                     log.info(
-                        'optimize file: %s result: %s -> %s, save %s (%s)',
-                        filePath, prettyBytes(originSize), prettyBytes(size),
-                        prettyBytes(saveSize), saverPercent.toFixed(2) + '%'
+                        'optimize file %s result: %s -> %s, save %s (%s)',
+                        filePath, prettyBytes(optResult.rawSize), prettyBytes(optResult.optSize),
+                        prettyBytes(optResult.saveSize), optResult.savePercent
                     );
                 }
 
-                callback();
+                if (!triggered) {
+                    callback();
+                }
             });
     }
     else {
         this.log.error('find the image processor for file: %s fail', file.path);
         callback();
     }
+};
+
+/**
+ * 构建处理后的行为，默认啥都不干，特别的processor可以复写这个方法
+ *
+ * @param {ProcessContext} processContext 构建环境对象
+ */
+ImageOptimizeProcessor.prototype.afterAll = function (processContext) {
+    var optResult = this.optResult;
+    var optFileNum = 0;
+    var totalFileNum = this.processFiles.length;
+
+    var log = this.log;
+    var totalSaveSize = 0;
+    Object.keys(optResult).forEach(function (path) {
+        var result = optResult[path];
+        if (result.optimized) {
+            optFileNum++;
+            totalSaveSize += result.saveSize;
+        }
+    });
+
+    log.info('optimize result: %s of %s image files optimized, total save size: %s',
+        optFileNum, totalFileNum, prettyBytes(totalSaveSize));
 };
 
 module.exports = exports = ImageOptimizeProcessor;
