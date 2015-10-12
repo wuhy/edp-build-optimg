@@ -1,6 +1,6 @@
 {
   "name": "edp-build-optimg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An optimizing image processor for EDP BUILD",
   "main": "index.js",
   "scripts": {
@@ -14,8 +14,7 @@
     "url": "http://github.com/wuhy/edp-build-optimg/issues"
   },
   "keywords": [
-    "edp",
-    "build",
+    "edp build",
     "optimize",
     "image"
   ],
